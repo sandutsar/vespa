@@ -18,6 +18,7 @@
 #include <vespa/vespalib/util/exceptions.h>
 #include <vespa/vespalib/util/threadstackexecutor.h>
 #include <vespa/vespalib/util/size_literals.h>
+#include <filesystem>
 #include <iomanip>
 
 using document::BucketId;
@@ -291,8 +292,7 @@ TEST("testTruncatedIdxFile"){
     }
     const char * magic = "mumbo jumbo";
     {
-        int truncate_result = truncate("bug-7257706-truncated/1422358701368384000.idx", 3830);
-        EXPECT_EQUAL(0, truncate_result);
+        std::filesystem::resize_file(std::filesystem::path("bug-7257706-truncated/1422358701368384000.idx"), 3830);
         LogDataStore datastore(executor, "bug-7257706-truncated", config, GrowStrategy(),
                                TuneFileSummary(), fileHeaderContext, tlSyncer, nullptr);
         EXPECT_EQUAL(331ul, datastore.lastSyncToken());
